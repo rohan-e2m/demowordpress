@@ -27,6 +27,27 @@
     padding: 8px;
     font-size: 16px;
 }
+#load-more-toys {
+    display: block;
+    margin: 20px auto;
+    padding: 10px 20px;
+    background-color: #0073e6;
+    color: white;
+    border: none;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+#load-more-toys:hover {
+    background-color: #005bb5;
+}
+
+#load-more-toys:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
 
 
 </style>
@@ -49,9 +70,9 @@
 <?php
 $args = array(
     'post_type'      => 'toys',
-    'posts_per_page' => -1,
+    'posts_per_page' => 3,
     'orderby'        => 'date',
-    'order'          => 'DESC'
+    'order'          => 'ASC'
 );
 $query = new WP_Query($args);
 
@@ -74,5 +95,6 @@ if ($query->have_posts()) : ?>
     <p>No posts found.</p>
 <?php endif; ?>
 </div>
+<button id="load-more-toys" data-page="1">Load More</button>
 
 

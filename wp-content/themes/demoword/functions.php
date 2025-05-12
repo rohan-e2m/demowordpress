@@ -331,14 +331,20 @@ function enqueue_toys_ajax_script() {
 }
 add_action('wp_enqueue_scripts', 'enqueue_toys_ajax_script');
 
+
+
 function filter_toys_ajax() {
     check_ajax_referer('toys_filter_nonce', 'nonce');
 
     $category = sanitize_text_field($_POST['category']);
+    $page = isset($_POST['page']) ? intval($_POST['page']) : 1;
 
     $args = array(
         'post_type'      => 'toys',
-        'posts_per_page' => 9,
+        'posts_per_page' => 3,
+        'paged'           => $page,
+        'orderby'         => 'date',
+        'order'           => 'ASC',
     );
 
     if (!empty($category)) {
@@ -358,16 +364,14 @@ function filter_toys_ajax() {
         while ($query->have_posts()) : $query->the_post(); ?>
             <div class="post-item">
                 <h3><?php the_title(); ?></h3>
-                <?php if (has_post_thumbnail()) {
-                    the_post_thumbnail('medium');
-                } ?>
+                <?php the_post_thumbnail('medium'); ?>
                 <p><?php the_excerpt(); ?></p>
                 <a href="<?php the_permalink(); ?>">Read More</a>
             </div>
         <?php endwhile;
         echo '</div>';
     else :
-        echo '<p>No toys found.</p>';
+        echo ''; // No more posts; hide Load More button
     endif;
 
     wp_die();
