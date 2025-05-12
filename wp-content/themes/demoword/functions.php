@@ -183,20 +183,43 @@ if ( class_exists( 'WooCommerce' ) ) {
 	require get_template_directory() . '/inc/woocommerce.php';
 }
 
-function prefix_create_custom_post_type() {
-    /*
-     * The $labels describes how the post type appears.
-     */
+
+
+
+
+/*****************************************
+ * Add custom post type for Toys *
+ *****************************************/
+
+add_action('init', 'toys_register');
+
+function toys_register() {
+
     $labels = array(
-        'name'          => 'Products', // Plural name
-        'singular_name' => 'Product'   // Singular name
+        'name' => 'Toys',
+        'singular_name' => 'Toy',
+        'add_new' => 'Add New',
+        'add_new_item' => 'Add New Toy',
+        'edit_item' => 'Edit Toy',
+        'new_item' => 'New Toy',
+        'view_item' => 'View Toy',
+        'search_items' => 'Search Toys',
+        'not_found' =>  'Nothing found',
+        'not_found_in_trash' => 'Nothing found in Trash',
+        'parent_item_colon' => ''
     );
 
-    /*
-     * The $supports parameter describes what the post type supports
-     */
-    $supports = array(
-        'title',        // Post title
+    $args = array(
+        'labels' => $labels,
+        'public' => true,
+        'publicly_queryable' => true,
+        'show_ui' => true,
+        'query_var' => true,
+        'has_archive' => true,
+        'rewrite' => array( 'slug' => 'toys', 'with_front' => true ),
+        'capability_type' => 'post',
+        'menu_position' => 6,
+        'supports' => array('title',        // Post title
         'editor',       // Post content
         'excerpt',      // Allows short description
         'author',       // Allows showing and choosing author
@@ -205,34 +228,11 @@ function prefix_create_custom_post_type() {
         'trackbacks',   // Supports trackbacks
         'revisions',    // Shows autosaved version of the posts
         'custom-fields' // Supports by custom fields
-    );
+        ) //here you can specify what type of inputs will be accessible in the admin area
+      );
 
-    /*
-     * The $args parameter holds important parameters for the custom post type
-     */
-    $args = array(
-        'labels'              => $labels,
-        'description'         => 'Post type post product', // Description
-        'supports'            => $supports,
-        'taxonomies'          => array( 'category', 'post_tag' ), // Allowed taxonomies
-        'hierarchical'        => false, // Allows hierarchical categorization, if set to false, the Custom Post Type will behave like Post, else it will behave like Page
-        'public'              => true,  // Makes the post type public
-        'show_ui'             => true,  // Displays an interface for this post type
-        'show_in_menu'        => true,  // Displays in the Admin Menu (the left panel)
-        'show_in_nav_menus'   => true,  // Displays in Appearance -> Menus
-        'show_in_admin_bar'   => true,  // Displays in the black admin bar
-        'menu_position'       => 5,     // The position number in the left menu
-        'menu_icon'           => true,  // The URL for the icon used for this post type
-        'can_export'          => true,  // Allows content export using Tools -> Export
-        'has_archive'         => true,  // Enables post type archive (by month, date, or year)
-        'exclude_from_search' => false, // Excludes posts of this type in the front-end search result page if set to true, include them if set to false
-        'publicly_queryable'  => true,  // Allows queries to be performed on the front-end part if set to true
-        'capability_type'     => 'post' // Allows read, edit, delete like “Post”
-    );
-
-    register_post_type('news', $args); //Create a post type with the slug is ‘product’ and arguments in $args.
+    register_post_type( 'toys' , $args );
 }
-add_action('init', 'prefix_create_custom_post_type');
 
 /****************************************
  * Add custom taxonomy for Toys *
@@ -270,44 +270,6 @@ $args = array(
 );
 
 register_taxonomy( 'toys_categories', 'toys', $args );
-}
-
-/*****************************************
- * Add custom post type for Toys *
- *****************************************/
-
-add_action('init', 'toys_register');
-
-function toys_register() {
-
-    $labels = array(
-        'name' => 'Toys',
-        'singular_name' => 'Toy',
-        'add_new' => 'Add New',
-        'add_new_item' => 'Add New Toy',
-        'edit_item' => 'Edit Toy',
-        'new_item' => 'New Toy',
-        'view_item' => 'View Toy',
-        'search_items' => 'Search Toys',
-        'not_found' =>  'Nothing found',
-        'not_found_in_trash' => 'Nothing found in Trash',
-        'parent_item_colon' => ''
-    );
-
-    $args = array(
-        'labels' => $labels,
-        'public' => true,
-        'publicly_queryable' => true,
-        'show_ui' => true,
-        'query_var' => true,
-        'has_archive' => true,
-        'rewrite' => array( 'slug' => 'toys', 'with_front' => true ),
-        'capability_type' => 'post',
-        'menu_position' => 6,
-        'supports' => array('title', 'excerpt', 'editor','thumbnail') //here you can specify what type of inputs will be accessible in the admin area
-      );
-
-    register_post_type( 'toys' , $args );
 }
 
 

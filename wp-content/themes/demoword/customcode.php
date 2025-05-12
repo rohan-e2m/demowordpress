@@ -75,6 +75,8 @@ $args = array(
     'order'          => 'ASC'
 );
 $query = new WP_Query($args);
+$post_id = get_the_ID(); // Replace with your post ID
+$featured_image_url = get_the_post_thumbnail_url($post_id, 'full');
 
 if ($query->have_posts()) : ?>
 <div id="toys-results">
@@ -83,7 +85,7 @@ if ($query->have_posts()) : ?>
             <div class="post-item">
                 <h3><?php the_title(); ?></h3>
                 <div class="post-thumbnail">
-                    <?php the_post_thumbnail('medium'); ?>
+                   <img src="<?php echo  $featured_image_url; ?>">
                 </div>
                 <p><?php the_excerpt(); ?></p>
                 <a href="<?php the_permalink(); ?>">Read More</a>
