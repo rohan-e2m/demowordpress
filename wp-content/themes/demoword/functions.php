@@ -309,3 +309,68 @@ function toys_register() {
 
     register_post_type( 'toys' , $args );
 }
+
+
+// Define the function that loads and returns the custom file content
+function register_inner_page_shortcode() {
+    add_shortcode('inner_page', function($atts = [], $content = null) {
+        ob_start();
+        // Include your external content file
+        include get_template_directory() . '/customcode.php';
+        return ob_get_clean();
+    });
+}
+add_action('init', 'register_inner_page_shortcode');
+
+function enqueue_toys_ajax_script() {
+    wp_enqueue_script('toys-filter', get_template_directory_uri() . '/js/toys-filter.js', array('jquery'), null, true);
+    wp_localize_script('toys-filter', 'toys_ajax_obj', array(
+        'ajax_url' => admin_url('admin-ajax.php'),
+        'nonce'    => wp_create_nonce('toys_filter_nonce')
+    ));
+}
+add_action('wp_enqueue_scripts', 'enqueue_toys_ajax_script');
+
+function filter_toys_ajax() {
+    check_ajax_referer('toys_filter_nonce', 'nonce');
+
+    $category = sanitize_text_field($_POST['category']);
+
+    $args = array(
+        'post_type'      => 'toys',
+        'posts_per_page' => 9,
+    );
+
+    if (!empty($category)) {
+        $args['tax_query'] = array(
+            array(
+                'taxonomy' => 'toys_categories',
+                'field'    => 'slug',
+                'terms'    => $category,
+            )
+        );
+    }
+
+    $query = new WP_Query($args);
+
+    if ($query->have_posts()) :
+        echo '<div class="three-column-grid">';
+        while ($query->have_posts()) : $query->the_post(); ?>
+            <div class="post-item">
+                <h3><?php the_title(); ?></h3>
+                <?php if (has_post_thumbnail()) {
+                    the_post_thumbnail('medium');
+                } ?>
+                <p><?php the_excerpt(); ?></p>
+                <a href="<?php the_permalink(); ?>">Read More</a>
+            </div>
+        <?php endwhile;
+        echo '</div>';
+    else :
+        echo '<p>No toys found.</p>';
+    endif;
+
+    wp_die();
+}
+add_action('wp_ajax_filter_toys', 'filter_toys_ajax');
+add_action('wp_ajax_nopriv_filter_toys', 'filter_toys_ajax');
